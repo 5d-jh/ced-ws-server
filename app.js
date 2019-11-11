@@ -17,13 +17,12 @@ websocketServer.on('request', request => {
     console.log((new Date()) + ' Connection accepted.');
     
     connection.on('message', message => {
-        if (message.type === 'utf8') {
-            console.log('Received Message: ' + message.utf8Data);
-            connection.sendUTF('pong');
-        }
+        connection.send(`Server received: ${message.utf8Data}`);
     });
 
+    connection.on('accumulate_acc');
+
     connection.on('close', (reasonCode, description) => {
-        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.', description);
     });
 });
