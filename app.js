@@ -1,4 +1,3 @@
-const { server: WebSocketServer } = require('websocket');
 const http = require('http');
 
 const httpServer = http.createServer((request, response) => {
@@ -10,19 +9,14 @@ httpServer.listen(33333, () => {
     console.log((new Date()) + ' Server is listening on port 33333');
 });
 
-const websocketServer = new WebSocketServer({ httpServer });
+const io = require('socket.io')(httpServer);
 
-websocketServer.on('request', request => {
-    const connection = request.accept();
-    console.log((new Date()) + ' Connection accepted.');
-    
-    connection.on('message', message => {
-        connection.send(`Server received: ${message.utf8Data}`);
-    });
+io.on('connection', socket => {
+    console.log('hello sio');
 
-    connection.on('accumulate_acc');
+    socket.emit('news', JSON.stringify({hello: 'world'}));
 
-    connection.on('close', (reasonCode, description) => {
-        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.', description);
-    });
+    io.on('my other event', socket => {
+        console.log(socket);
+    })
 });
