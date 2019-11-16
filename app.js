@@ -12,11 +12,12 @@ httpServer.listen(33333, () => {
 const io = require('socket.io')(httpServer);
 
 io.on('connection', socket => {
-    console.log('hello sio');
+    console.log(`[${new Date()}] Socket connected.`);
 
-    socket.emit('news', JSON.stringify({hello: 'world'}));
+    socket.emit('get_a', {hello: 'world'});
 
-    io.on('my other event', socket => {
+    socket.on('put_a', socket => {
+        socket.emit('get_a', incoming);
         console.log(socket);
-    })
+    });
 });
