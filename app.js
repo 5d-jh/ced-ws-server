@@ -14,10 +14,33 @@ const io = require('socket.io')(httpServer);
 io.on('connection', socket => {
     console.log(`[${new Date()}] Socket connected.`);
 
-    socket.emit('get_a', {hello: 'world'});
+    socket.on('putq', msg => {
 
-    socket.on('put_a', socket => {
-        socket.emit('get_a', incoming);
-        console.log(socket);
+        try {
+            // const data = JSON.parse(msg);
+
+            io.emit('getq', msg);
+        } catch (error) {
+            console.error(error);
+            io.emit('error', error);
+        }
+    });
+
+    socket.on('puto', msg => {
+        try {
+            const data = JSON.parse(msg);
+            io.emit('geto', data.map(
+                o => {
+                    const r = Math.sqrt(Math.abs(o.dist - o.px^2 - 0.009));
+                    return {
+                        type: o.type,
+                        v: [k*r/0.03, r]
+                    };
+                }
+            ));
+        } catch (error) {
+            console.error(error);
+            io.emit('error', error);
+        }
     });
 });
