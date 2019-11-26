@@ -3,21 +3,26 @@
 ## 수신 이벤트 (서버 -> 클라이언트)
 ### `getq`
 ```
-{
-    "a": Number 가속도,
-    "x": Number 쿼터니언X,
-    "y": Number 쿼터니언Y,
-    "z": Number 쿼터니언Z,
-    "w": Number 쿼터니언W
-}
+[
+    {
+        "x": Number 쿼터니언X,
+        "y": Number 쿼터니언Y,
+        "z": Number 쿼터니언Z,
+        "w": Number 쿼터니언W
+    }, {
+        "x": Number 가속도X,
+        "y": Number 가속도Y,
+        "z": Number 가속도Z
+    }
+]
 ```
 
 ### `geto`
 ```
-{
+[{
     "type": String 감지된 물체의 타입
     "v": [Number, Number] 물체의 위치를 표현하는 벡터
-}
+}]
 ```
 
 ## 송신 이벤트 (클라이언트 -> 서버)
