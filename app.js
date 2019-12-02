@@ -13,17 +13,20 @@ const io = require('socket.io')(httpServer);
 
 io.on('connection', socket => {
     console.log(`[${new Date()}] Socket connected.`);
+    var prevRoll = 0;
+    var steps = 0;
 
     socket.on('putq', msg => {
+        const [roll, pitch, yaw] = msg;
 
-        try {
-            // const data = JSON.parse(msg);
+        io.emit('getq', { roll, pitch, yaw });
 
-            io.emit('getq', msg);
-        } catch (error) {
-            console.error(error);
-            io.emit('error', error);
+        if ((85 < prevRoll && prevRoll < 95) && roll > 95) {
+            io.emit('walk', 70);
+            isPrevValInScope = false;
         }
+
+        prevRoll = roll;
     });
 
     socket.on('puto', msg => {
@@ -31,7 +34,8 @@ io.on('connection', socket => {
             const data = JSON.parse(msg);
             io.emit('geto', data.map(
                 o => {
-                    const r = Math.sqrt(Math.abs(o.dist - o.px^2 - 0.009));
+                    const k = 0.0002645833 * o.px;
+                    const r = Math.sqrt(Math.abs(o.dist - k^2 - 0.009));
                     return {
                         type: o.type,
                         v: [k*r/0.03, r]

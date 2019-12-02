@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "pm2": "^4.1.2",
+    "pm2": "^4.2.0",
     "socket.io": "1.7.4",
     "socket.io-client": "^2.3.0"
   }
