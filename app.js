@@ -23,7 +23,7 @@ io.on('connection', socket => {
 
         io.emit('getq', { roll, pitch, yaw });
 
-        if ((85 < prevRoll && prevRoll < 95) && roll > 95) {
+        if ((85 < prevRoll && prevRoll < 100) && roll > 100) {
             console.log('walk', ++steps);
             io.emit('walk', 70);
         }
@@ -37,12 +37,14 @@ io.on('connection', socket => {
             const result = data.map(
                 o => {
                     const k = 0.02645833 * o.px;
-                    const r = Math.sqrt(Math.abs(o.dist*100 - k^2 - 0.09));
+                    const r =   Math.sqrt(Math.abs(o.dist*100 - k^2 - 0.09));
                     return {
                         type: o.type,
-                        v: [k*r/0.03, r, 110]
+                        vx: k*r/0.03,
+                        vy: r
                     };
                 }
+
             );
             console.log(result);
             io.emit('geto', result);
@@ -54,6 +56,7 @@ io.on('connection', socket => {
 
     socket.on('putttt', msg => {
         console.log(msg);
+        const val = Number(msg);
         io.emit('getttt',  Number(msg) /*0: 오른쪽, 1: 앞, 2: 왼쪽, 3: 뒤*/);
     });
 });
