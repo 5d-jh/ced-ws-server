@@ -16,14 +16,16 @@ io.on('connection', socket => {
     var prevRoll = 0;
     var steps = 0;
 
+    socket.emit('navigate', 1);
+
     socket.on('putq', msg => {
         const [roll, pitch, yaw] = msg;
 
         io.emit('getq', { roll, pitch, yaw });
 
         if ((85 < prevRoll && prevRoll < 95) && roll > 95) {
+            console.log('walk', ++steps);
             io.emit('walk', 70);
-            isPrevValInScope = false;
         }
 
         prevRoll = roll;
@@ -32,19 +34,26 @@ io.on('connection', socket => {
     socket.on('puto', msg => {
         try {
             const data = JSON.parse(msg);
-            io.emit('geto', data.map(
+            const result = data.map(
                 o => {
-                    const k = 0.0002645833 * o.px;
-                    const r = Math.sqrt(Math.abs(o.dist - k^2 - 0.009));
+                    const k = 0.02645833 * o.px;
+                    const r = Math.sqrt(Math.abs(o.dist*100 - k^2 - 0.09));
                     return {
                         type: o.type,
-                        v: [k*r/0.03, r]
+                        v: [k*r/0.03, r, 110]
                     };
                 }
-            ));
+            );
+            console.log(result);
+            io.emit('geto', result);
         } catch (error) {
             console.error(error);
             io.emit('error', error);
         }
+    });
+
+    socket.on('putttt', msg => {
+        console.log(msg);
+        io.emit('getttt',  Number(msg) /*0: 오른쪽, 1: 앞, 2: 왼쪽, 3: 뒤*/);
     });
 });
